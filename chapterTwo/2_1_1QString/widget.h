@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QDebug>
 
 class Widget : public QWidget
 {
