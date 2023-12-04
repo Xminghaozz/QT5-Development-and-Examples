@@ -22,7 +22,7 @@ Dialog::Dialog(QWidget *parent)
 
     LeftLayout = new QGridLayout();
     // 向布局中添加需要布局的控件
-    LeftLayout->addWidget(UserNameLabel,0,0);           //  用户名
+    LeftLayout->addWidget(UserNameLabel,0,0);           // 用户名
     LeftLayout->addWidget(UserNameLineEdit,0,1);
     LeftLayout->addWidget(NameLabel,1,0);               // 姓名
     LeftLayout->addWidget(NameLineEdit,1,1);
