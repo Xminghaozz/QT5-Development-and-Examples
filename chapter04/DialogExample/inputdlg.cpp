@@ -10,7 +10,7 @@ InputDlg::InputDlg( QWidget *parent )
     nameLabel2->setText( tr( "薛明昊" ) ); // 姓名的初始值
     nameLabel2->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     nameBtn = new QPushButton;
-    nameBtn->setText( tr( "修改姓名" ) );
+    nameBtn->setText( tr( "修改姓名：" ) );
 
     sexLabel1 = new QLabel;
     sexLabel1->setText( tr( "性别：" ) );
