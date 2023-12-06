@@ -25,6 +25,7 @@ class Dialog : public QDialog
     void showFont();
     void showInputDlg();
     void showMsgDlg();
+    void showCustomDlg();
 
   private:
     QPushButton *fileBtn;
@@ -42,5 +43,8 @@ class Dialog : public QDialog
 
     QPushButton *msgBtn;
     MsgBoxDlg   *msgDlg;
+
+    QPushButton *customBtn;
+    QLabel      *label;
 };
 #endif // DIALOG_H

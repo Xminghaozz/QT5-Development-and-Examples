@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/BackButton.png</file>
+        <file>icon/BackButtonSelected.png</file>
+        <file>icon/BackButtonSound.wav</file>
+        <file>icon/BoardNode.png</file>
+        <file>icon/Coin0001.png</file>
+        <file>icon/Coin0002.png</file>
+        <file>icon/Coin0003.png</file>
+        <file>icon/Coin0004.png</file>
+        <file>icon/Coin0005.png</file>
+        <file>icon/Coin0006.png</file>
+        <file>icon/Coin0007.png</file>
+        <file>icon/LevelCompletedDialogBg.png</file>
+        <file>icon/LevelIcon.png</file>
+        <file>icon/LevelWinSound.wav</file>
+        <file>icon/MenuSceneBg.png</file>
+        <file>icon/MenuSceneStartButton.png</file>
+        <file>icon/myDouDZ.wav</file>
+        <file>icon/OtherSceneBg.png</file>
+        <file>icon/PlayLevelSceneBg.png</file>
+        <file>icon/TapButtonSound.wav</file>
+        <file>icon/Title.png</file>
+    </qresource>
+</RCC>

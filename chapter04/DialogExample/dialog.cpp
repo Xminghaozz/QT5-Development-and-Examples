@@ -55,6 +55,16 @@ Dialog::Dialog( QWidget *parent )
 
     mainLayout->addWidget( msgBtn, 3, 1 );
     connect( msgBtn, &QPushButton::clicked, this, &Dialog::showMsgDlg );
+
+    /*自定义消息对话框*/
+    customBtn = new QPushButton;
+    customBtn->setText( tr( "用户自定义消息对话框" ) );
+    label = new QLabel;
+    label->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+
+    mainLayout->addWidget( customBtn, 4, 0 );
+    mainLayout->addWidget( label, 4, 1 );
+    connect( customBtn, &QPushButton::clicked, this, &Dialog::showCustomDlg );
 }
 
 Dialog::~Dialog() {}
@@ -95,4 +105,26 @@ void Dialog::showMsgDlg()
 {
     msgDlg = new MsgBoxDlg( this );
     msgDlg->show();
+}
+
+void Dialog::showCustomDlg()
+{
+    label->setText( tr( "Custom Message Box" ) );
+    QMessageBox customMsgBox;
+    customMsgBox.setWindowTitle( tr( "用户自定义消息框" ) );
+
+    QPushButton *yesBtn    = customMsgBox.addButton( tr( "Yes" ), QMessageBox::ActionRole );
+    QPushButton *noBtn     = customMsgBox.addButton( tr( "No" ), QMessageBox::ActionRole );
+    QPushButton *cancelBtn = customMsgBox.addButton( QMessageBox::Cancel );
+    customMsgBox.setText( tr( "这是一个用户自定义的对话框" ) );
+    customMsgBox.setIconPixmap( QPixmap( ":/icon/Coin0001.png" ) );
+    customMsgBox.exec(); // 显示此自定义消息框
+    if ( customMsgBox.clickedButton() == yesBtn )
+        label->setText( "Custom Message Box/Yes" );
+    if ( customMsgBox.clickedButton() == noBtn )
+        label->setText( "Custom Message Box/No" );
+    if ( customMsgBox.clickedButton() == cancelBtn )
+        label->setText( "Custom Message Box/Cancel" );
+
+    return;
 }
