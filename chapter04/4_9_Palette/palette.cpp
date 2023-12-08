@@ -102,12 +102,19 @@ void Palette::showWindow()
     // 获得当前选择的颜色值
     QStringList colorList = QColor::colorNames();
     QColor      color     = QColor( colorList[ windowComboBox->currentIndex() ] );
-    QPalette    p         = contentFrame->palette();
+    // QPalette    p         = contentFrame->palette();
 
-    p.setColor( QPalette::Window, color );
-    // 把修改后的调色板信息应用到 contentFrame 窗体中，更新显示
-    contentFrame->setPalette( p );
-    contentFrame->update();
+    // p.setColor( QPalette::Window, color );
+    // // 把修改后的调色板信息应用到 contentFrame 窗体中，更新显示
+    // contentFrame->setPalette( p );
+    // contentFrame->update();
+    // 构造 QSS 样式字符串，设置窗口背景颜色
+    // Qt 中的窗口背景颜色通常由 QSS（Qt Style Sheets）来控制，而不是通过 QPalette
+    // 来直接设置。上面的代码是没有效果的 构造 QSS 样式字符串，设置背景颜色
+    QString styleSheet = QString( "background-color: %1;" ).arg( color.name() );
+
+    // 应用样式表到窗口
+    this->setStyleSheet( styleSheet );
 }
 
 void Palette::showWindowText()
@@ -125,11 +132,18 @@ void Palette::showButton()
 {
     QStringList colorList = QColor::colorNames();
     QColor      color     = QColor( colorList[ buttonComboBox->currentIndex() ] );
-    QPalette    p         = contentFrame->palette();
+    // QPalette    p         = contentFrame->palette();
 
-    p.setColor( QPalette::Button, color );
-    contentFrame->setPalette( p );
-    contentFrame->update();
+    // p.setColor( QPalette::Button, color );
+    // contentFrame->setPalette( p );
+    // contentFrame->update();
+
+    // Qt 中的按钮背景颜色通常由 QSS（Qt Style Sheets）来控制，而不是通过 QPalette
+    // 来直接设置。上面的代码是没有效果的 构造 QSS 样式字符串，设置背景颜色
+    QString styleSheet = QString( "background-color: %1;" ).arg( color.name() );
+
+    // 应用样式表到按钮
+    okBtn->setStyleSheet( styleSheet );
 }
 
 void Palette::showButtonText()
