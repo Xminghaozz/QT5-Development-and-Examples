@@ -14,7 +14,7 @@ ProgressDlg::ProgressDlg( QWidget *parent )
     fileNumLineEdit = new QLineEdit;
     fileNumLineEdit->setText( tr( "100000" ) );
     progressType = new QLabel;
-    progressType->setText( tr( " 显示类型：" ) );
+    progressType->setText( tr( "显示类型：" ) );
     comboBox = new QComboBox;
     comboBox->addItem( tr( "progressBar" ) );
     comboBox->addItem( tr( "progressDialog" ) );
