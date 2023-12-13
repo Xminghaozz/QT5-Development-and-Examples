@@ -1,10 +1,15 @@
 #include "imgprocessor.h"
 
+#include <QActionGroup>
+#include <QColorDialog>
 #include <QFile>
 #include <QFileDialog>
+#include <QFontDatabase>
 #include <QPainter>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QStyle>
+#include <QTextList>
 #include <QTextStream>
 #include <QTransform>
 
@@ -14,6 +19,42 @@ ImgProcessor::ImgProcessor( QWidget *parent )
     this->setWindowTitle( tr( "Easy Word" ) );
     showWidget = new ShowWidget( this );
     this->setCentralWidget( showWidget );
+    // 在工具栏上嵌入控件
+    // 设置字体
+    fontLabel1   = new QLabel( tr( " 字体：" ) );
+    fontComboBox = new QFontComboBox;
+    fontComboBox->setFontFilters( QFontComboBox::ScalableFonts );
+    fontLabel2               = new QLabel( tr( " 字号：" ) );
+    sizeComboBox             = new QComboBox;
+    QList<int> standardSizes = QFontDatabase::standardSizes();
+    for ( int size : standardSizes )
+        sizeComboBox->addItem( QString::number( size ) );
+    boldBtn = new QToolButton;
+    boldBtn->setIcon( QIcon( ":/Img/bold.png" ) );
+    boldBtn->setCheckable( true );
+    italicBtn = new QToolButton;
+    italicBtn->setIcon( QIcon( ":/Img/italic.png" ) );
+    italicBtn->setCheckable( true );
+    underlineBtn = new QToolButton;
+    underlineBtn->setIcon( QIcon( ":/Img/underline.png" ) );
+    underlineBtn->setCheckable( true );
+    colorBtn = new QToolButton;
+    colorBtn->setIcon( QIcon( ":/Img/color.png" ) );
+    colorBtn->setCheckable( true );
+
+    // 排序
+    listLabel    = new QLabel( tr( " 排序" ) );
+    listComboBox = new QComboBox;
+    listComboBox->addItem( "Standard" );
+    listComboBox->addItem( "QTextListFormat::ListDisc" );
+    listComboBox->addItem( "QTextListFormat::ListCircle" );
+    listComboBox->addItem( "QTextListFormat::ListSquare" );
+    listComboBox->addItem( "QTextListFormat::ListDecimal" );
+    listComboBox->addItem( "QTextListFormat::ListLowerAlpha" );
+    listComboBox->addItem( "QTextListFormat::ListUpperAlpha" );
+    listComboBox->addItem( "QTextListFormat::ListLowerRoman" );
+    listComboBox->addItem( "QTextListFormat::ListUpperRoman" );
+
     /*创建动作、菜单、工具栏的函数*/
     createActions();
     createMenus();
@@ -23,6 +64,24 @@ ImgProcessor::ImgProcessor( QWidget *parent )
         // 在imageLabel对象中放置图片
         showWidget->imageLabel->setPixmap( QPixmap::fromImage( img ) );
     }
+
+    connect( fontComboBox, &QFontComboBox::currentTextChanged, this,
+             &ImgProcessor::showFontComboBox );
+    connect( sizeComboBox, &QComboBox::currentTextChanged, this, &ImgProcessor::showSizeSpinBox );
+    connect( boldBtn, &QToolButton::clicked, this, &ImgProcessor::showBoldBtn );
+    connect( italicBtn, &QToolButton::clicked, this, &ImgProcessor::showItalicBtn );
+    connect( underlineBtn, &QToolButton::clicked, this, &ImgProcessor::showUnderlineBtn );
+    connect( colorBtn, &QToolButton::clicked, this, &ImgProcessor::showColorBtn );
+    connect( showWidget->text, &QTextEdit::currentCharFormatChanged, this,
+             &ImgProcessor::showCurrentFormatChanged );
+
+    connect( listComboBox, &QComboBox::activated, this, &ImgProcessor::showList );
+    connect( showWidget->text->document(), &QTextDocument::undoAvailable, redoAction,
+             &QAction::setEnabled );
+    connect( showWidget->text->document(), &QTextDocument::redoAvailable, redoAction,
+             &QAction::setEnabled );
+    connect( showWidget->text, &QTextEdit::cursorPositionChanged, this,
+             &ImgProcessor::showCursorPositionChanged );
 }
 
 ImgProcessor::~ImgProcessor() {}
@@ -119,6 +178,18 @@ void ImgProcessor::createActions()
     connect( undoAction, &QAction::triggered, showWidget->text, &QTextEdit::undo );
     redoAction = new QAction( QIcon( ":/Img/redo.png" ), "重做", this );
     connect( redoAction, &QAction::triggered, showWidget->text, &QTextEdit::redo );
+
+    // 排序: 左对齐、右对齐、居中和两端对齐
+    actGrp     = new QActionGroup( this );
+    leftAction = new QAction( QIcon( ":/Img/left.png" ), " 左对齐 ", actGrp );
+    leftAction->setCheckable( true );
+    rightAction = new QAction( QIcon( ":/Img/right.png" ), " 右对齐 ", actGrp );
+    rightAction->setCheckable( true );
+    centerAction = new QAction( QIcon( ":/Img/center.png" ), " 居中", actGrp );
+    centerAction->setCheckable( true );
+    justifyAction = new QAction( QIcon( ":/Img/justify.png" ), " 两端对齐 ", actGrp );
+    justifyAction->setCheckable( true );
+    connect( actGrp, &QActionGroup::triggered, this, &ImgProcessor::showAlignment );
 }
 
 void ImgProcessor::createMenus()
@@ -181,6 +252,26 @@ void ImgProcessor::createToolBars()
         Qt::TopToolBarArea |
         Qt::LeftToolBarArea ); // 工具条是一个可移动的窗口，它可停靠的区域由QToolBar的allowAreas决定
     fileTool->setMovable( false );
+
+    // 字体工具条
+    fontToolBar = addToolBar( "Font" );
+    fontToolBar->addWidget( fontLabel1 );
+    fontToolBar->addWidget( fontComboBox );
+    fontToolBar->addWidget( fontLabel2 );
+    fontToolBar->addWidget( sizeComboBox );
+    fontToolBar->addSeparator();
+    fontToolBar->addWidget( boldBtn );
+    fontToolBar->addWidget( italicBtn );
+    fontToolBar->addWidget( underlineBtn );
+    fontToolBar->addSeparator();
+    fontToolBar->addWidget( colorBtn );
+
+    // 排序工具条
+    listToolBar = addToolBar( "list" );
+    listToolBar->addWidget( listLabel );
+    listToolBar->addWidget( listComboBox );
+    listToolBar->addSeparator();
+    listToolBar->addActions( actGrp->actions() );
 }
 
 void ImgProcessor::loadFile( QString fileName )
@@ -199,7 +290,16 @@ void ImgProcessor::loadFile( QString fileName )
     }
 }
 
-void ImgProcessor::mergeFormat( QTextCharFormat ) {}
+void ImgProcessor::mergeFormat( QTextCharFormat format )
+{
+    QTextCursor cursor = showWidget->text->textCursor(); // 获得编辑框中的光标
+    if ( !cursor.hasSelection() )
+    {
+        cursor.select( QTextCursor::WordUnderCursor );
+    }
+    cursor.mergeCharFormat( format );
+    showWidget->text->mergeCurrentCharFormat( format );
+}
 
 void ImgProcessor::showNewFile()
 {
@@ -320,5 +420,152 @@ void ImgProcessor::showMirrorHorizontal()
     if ( img.isNull() )
         return;
     img = img.mirrored( true, false );
+
     showWidget->imageLabel->setPixmap( QPixmap::fromImage( img ) );
+}
+
+void ImgProcessor::showFontComboBox( QString comboStr )
+{
+    // 设置字体
+    QTextCharFormat fmt; // 创建一个QTextCharFormat对象
+    fmt.setFontFamilies(
+        QStringList( QFontInfo( comboStr ).family() ) ); // 将选择的字体名称设置给QTextFormat对象
+    mergeFormat( fmt ); // 将新的格式应用到光标选区内的字符
+}
+
+void ImgProcessor::showSizeSpinBox( QString spinValue ) // 设置字号
+{
+    QTextCharFormat fmt;
+    fmt.setFontPointSize( spinValue.toFloat() );
+    showWidget->text->mergeCurrentCharFormat( fmt );
+}
+
+void ImgProcessor::showBoldBtn() // 设置字体加粗
+{
+    QTextCharFormat fmt;
+    fmt.setFontWeight( boldBtn->isChecked() ? QFont::Bold : QFont::Normal );
+    showWidget->text->mergeCurrentCharFormat( fmt );
+}
+
+void ImgProcessor::showItalicBtn() // 设置文字斜体
+{
+    QTextCharFormat fmt;
+    fmt.setFontItalic( italicBtn->isChecked() );
+    showWidget->text->mergeCurrentCharFormat( fmt );
+}
+
+void ImgProcessor::showUnderlineBtn() // 设置文字下划线
+{
+    QTextCharFormat fmt;
+    fmt.setFontUnderline( underlineBtn->isChecked() );
+    showWidget->text->mergeCurrentCharFormat( fmt );
+}
+
+void ImgProcessor::showColorBtn() // 设置文字颜色
+{
+    QColor color = QColorDialog::getColor( Qt::red, this );
+    if ( color.isValid() )
+    {
+        QTextCharFormat fmt;
+        fmt.setForeground( color );
+        showWidget->text->mergeCurrentCharFormat( fmt );
+    }
+}
+
+void ImgProcessor::showCurrentFormatChanged( const QTextCharFormat &fmt )
+{
+    fontComboBox->setCurrentIndex( fontComboBox->findText( fmt.fontFamilies().toString() ) );
+    sizeComboBox->setCurrentIndex(
+        sizeComboBox->findText( QString::number( fmt.fontPointSize() ) ) );
+    boldBtn->setChecked( fmt.font().bold() );
+    italicBtn->setChecked( fmt.fontItalic() );
+    underlineBtn->setChecked( fmt.fontUnderline() );
+}
+
+void ImgProcessor::showList( int index )
+{
+    // 获得编辑框的QTextCursor对象指针
+    QTextCursor cursor = showWidget->text->textCursor();
+
+    if ( index != 0 )
+    {
+        QTextListFormat::Style style = QTextListFormat::ListDisc;
+        switch ( index ) // 设置style属性
+        {
+        case 1:
+            style = QTextListFormat::ListDisc;
+            break;
+        case 2:
+            style = QTextListFormat::ListCircle;
+            break;
+        case 3:
+            style = QTextListFormat::ListSquare;
+            break;
+        case 4:
+            style = QTextListFormat::ListDecimal;
+            break;
+        case 5:
+            style = QTextListFormat::ListLowerAlpha;
+            break;
+        case 6:
+            style = QTextListFormat::ListUpperAlpha;
+            break;
+        case 7:
+            style = QTextListFormat::ListLowerRoman;
+            break;
+        case 8:
+            style = QTextListFormat::ListUpperRoman;
+            break;
+        default:
+            break;
+        }
+
+        /*设置缩进值*/
+        cursor.beginEditBlock();
+        QTextBlockFormat blockFmt = cursor.blockFormat();
+        QTextListFormat  listFmt;
+        if ( cursor.currentList() )
+        {
+            listFmt = cursor.currentList()->format();
+        }
+        else
+        {
+            listFmt.setIndent( blockFmt.indent() + 1 );
+            blockFmt.setIndent( 0 );
+            cursor.setBlockFormat( blockFmt );
+        }
+        listFmt.setStyle( style );
+        cursor.createList( listFmt );
+        cursor.endEditBlock();
+    }
+    else
+    {
+        QTextBlockFormat bfmt;
+        bfmt.setObjectIndex( -1 );
+        cursor.mergeBlockFormat( bfmt );
+    }
+}
+
+void ImgProcessor::showAlignment( QAction *act )
+{
+    if ( act == leftAction )
+        showWidget->text->setAlignment( Qt::AlignLeft );
+    if ( act == rightAction )
+        showWidget->text->setAlignment( Qt::AlignRight );
+    if ( act == centerAction )
+        showWidget->text->setAlignment( Qt::AlignCenter );
+    if ( act == justifyAction )
+        showWidget->text->setAlignment( Qt::AlignJustify );
+}
+
+void ImgProcessor::showCursorPositionChanged()
+{
+    if ( showWidget->text->alignment() == Qt::AlignLeft )
+        leftAction->setChecked( true );
+    if ( showWidget->text->alignment() == Qt::AlignRight )
+        rightAction->setChecked( true );
+    if ( showWidget->text->alignment() == Qt::AlignCenter )
+        centerAction->setChecked( true );
+    if ( showWidget->text->alignment() == Qt::AlignJustify )
+        justifyAction->setChecked( true );
 }
