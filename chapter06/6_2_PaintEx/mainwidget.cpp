@@ -25,7 +25,7 @@ MainWidget::MainWidget( QWidget *parent )
     penColorFrame = new QFrame;
     penColorFrame->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     penColorFrame->setAutoFillBackground( true );
-    penColorFrame->setPalette( QPalette( Qt::blue ) );
+     penColorFrame->setPalette( QPalette( Qt::blue ) );
     penColorBtn = new QPushButton( tr( " 更改" ) );
     connect( penColorBtn, &QPushButton::clicked, this, &MainWidget::ShowPenColor );
 
