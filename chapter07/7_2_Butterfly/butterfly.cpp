@@ -33,6 +33,7 @@ void Butterfly::timerEvent( QTimerEvent * )
     {
         setPos( pos().x(), scene()->sceneRect().top() );
     }
+
     angle += ( rand() % 10 ) / 20.0;
     qreal dx = fabs( sin( angle * PI ) * 10.0 );
     qreal dy = ( rand() % 20 ) - 10.0;
