@@ -13,7 +13,15 @@ MainWindow::MainWindow( QWidget *parent )
     drawWidget->setColor( Qt::black );             // 初始化颜色
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow()
+{
+    delete styleLabel;
+    delete styleComboBox;
+    delete widthLabel;
+    delete widthSpinBox;
+    delete colorBtn;
+    delete clearBtn;
+}
 
 void MainWindow::createToolBar()
 {
