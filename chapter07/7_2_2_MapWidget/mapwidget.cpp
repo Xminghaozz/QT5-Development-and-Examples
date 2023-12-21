@@ -8,16 +8,18 @@
 MapWidget::MapWidget()
 {
     // 读取地图信息
-    readMap(); //(a)
+    readMap();
     zoom                   = 50;
     int             width  = map.width();
     int             height = map.height();
-    QGraphicsScene *scene  = new QGraphicsScene( this ); //(b)
+    QGraphicsScene *scene  = new QGraphicsScene( this );
+
     // 限定场景的显示区域为地图的大小
     scene->setSceneRect( -width / 2, -height / 2, width, height );
     setScene( scene );
     setCacheMode( CacheBackground );
-    // 用于地图缩放的滑动条									//(c)
+
+    // 用于地图缩放的滑动条
     QSlider *slider = new QSlider;
     slider->setOrientation( Qt::Vertical );
     slider->setRange( 1, 100 );
@@ -26,10 +28,11 @@ MapWidget::MapWidget()
     connect( slider, &QSlider::valueChanged, this, &MapWidget::slotZoom );
     QLabel *zoominLabel = new QLabel;
     zoominLabel->setScaledContents( true );
-    zoominLabel->setPixmap( QPixmap( "zoomin.png" ) );
+    zoominLabel->setPixmap( QPixmap( ":/Img/zoomin.png" ) );
     QLabel *zoomoutLabel = new QLabel;
     zoomoutLabel->setScaledContents( true );
-    zoomoutLabel->setPixmap( QPixmap( "zoomout.png" ) );
+    zoomoutLabel->setPixmap( QPixmap( ":/Img/zoomout.png" ) );
+
     // 坐标值显示区
     QLabel *label1 = new QLabel( tr( "GraphicsView:" ) );
     viewCoord      = new QLabel;
@@ -37,6 +40,7 @@ MapWidget::MapWidget()
     sceneCoord     = new QLabel;
     QLabel *label3 = new QLabel( tr( "map:" ) );
     mapCoord       = new QLabel;
+
     // 坐标显示区布局
     QGridLayout *gridLayout = new QGridLayout;
     gridLayout->addWidget( label1, 0, 0 );
@@ -48,15 +52,18 @@ MapWidget::MapWidget()
     gridLayout->setSizeConstraint( QLayout::SetFixedSize );
     QFrame *coordFrame = new QFrame;
     coordFrame->setLayout( gridLayout );
+
     // 缩放控制子布局
     QVBoxLayout *zoomLayout = new QVBoxLayout;
     zoomLayout->addWidget( zoominLabel );
     zoomLayout->addWidget( slider );
     zoomLayout->addWidget( zoomoutLabel );
+
     // 坐标显示区域布局
     QVBoxLayout *coordLayout = new QVBoxLayout;
     coordLayout->addWidget( coordFrame );
     coordLayout->addStretch();
+
     // 主布局
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addLayout( zoomLayout );
@@ -98,10 +105,12 @@ void MapWidget::slotZoom( int value ) // 地图缩放
     scale( s, s );
     zoom = value;
 }
+
 void MapWidget::drawBackground( QPainter *painter, const QRectF &rect )
 {
     painter->drawPixmap( int( sceneRect().left() ), int( sceneRect().top() ), map );
 }
+
 void MapWidget::mouseMoveEvent( QMouseEvent *event )
 {
     // QGraphicsView 坐标
@@ -115,6 +124,7 @@ void MapWidget::mouseMoveEvent( QMouseEvent *event )
     QPointF latLon = mapToMap( scenePoint );
     mapCoord->setText( QString::number( latLon.x() ) + "," + QString::number( latLon.y() ) );
 }
+
 QPointF MapWidget::mapToMap( QPointF p )
 {
     QPointF latLon;
