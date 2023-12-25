@@ -10,11 +10,9 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
     modelex.cpp
 
 HEADERS += \
-    mainwindow.h \
     modelex.h
 
 # Default rules for deployment.

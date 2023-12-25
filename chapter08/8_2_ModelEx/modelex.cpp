@@ -47,8 +47,9 @@ QVariant ModelEx::data( const QModelIndex &index, int role ) const
         default:
             return QVariant();
         }
-        return QVariant();
     }
+
+    return QVariant();
 }
 
 QVariant ModelEx::headerData( int section, Qt::Orientation orientation, int role ) const
