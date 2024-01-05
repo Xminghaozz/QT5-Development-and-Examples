@@ -7,7 +7,7 @@
 
 class TimeServer;
 
-class Dialog : public QDialog
+class Dialog : public QDialog   //服务器端界面类
 {
     Q_OBJECT
 
