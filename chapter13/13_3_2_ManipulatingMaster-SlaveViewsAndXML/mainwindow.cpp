@@ -71,6 +71,7 @@ QGroupBox *MainWindow::createFactoryGroupBox()
     QGridLayout *layout = new QGridLayout;
     layout->addWidget( factoryView, 0, 0 );
     box->setLayout( layout );
+
     return box;
 }
 
@@ -93,6 +94,7 @@ QGroupBox *MainWindow::createCarGroupBox()
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget( carView );
     box->setLayout( layout );
+
     return box;
 }
 
@@ -170,6 +172,7 @@ QModelIndex MainWindow::indexOfFactory( const QString &factory )
         if ( record.value( "manufactory" ) == factory )
             return factoryModel->index( i, 1 );
     }
+
     return QModelIndex();
 }
 
@@ -182,6 +185,7 @@ void MainWindow::readCarData()
         file->close();
         return;
     }
+
     file->close();
 }
 
