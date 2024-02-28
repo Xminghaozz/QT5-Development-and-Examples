@@ -55,7 +55,7 @@ void MainWindow::onTableSelectChange( int row )
     showCommodityPhoto();
     QSqlQuery query;
 
-    query.exec( QString( "select Namefrom category where CategoryID= (selectCategoryID from "
+    query.exec( QString( "select Name from category where CategoryID= (select CategoryID from "
                          "commodity where Name='%1') " )
                     .arg( ui->newNameLineEdit->text() ) );
     query.next();
@@ -83,6 +83,7 @@ void MainWindow::loadPreCommodity()
                                            "CategoryID from category where Name ='%1')" )
                                       .arg( ui->preCategoryComboBox->currentText() ) );
     ui->preNameComboBox->setModel( commodityNameModel );
+    ui->preNameComboBox->update();
     onPreNameComboBoxChange();
 }
 
@@ -91,9 +92,10 @@ void MainWindow::onPreNameComboBoxChange()
     // 在“预售订单”页改选商品名称时联动显示该商品的各信息项
     QSqlQueryModel *preCommodityModel = new QSqlQueryModel( this ); // 商品表数据模型
     QString         name = ui->preNameComboBox->currentText();      // 当前选中的商品名
-    preCommodityModel->setQuery(
-        "select OutputPrice, Amount, Picture from commodity where Name ='" + name +
-        "'" ); // 从数据库中查出单价、库存、照片等信息
+    QString         queryStr =
+        "select OutputPrice, Amount, Picture from commodity where Name ='" + name + "'";
+    qDebug() << "Query String: " << queryStr; // Add this line for debugging
+    preCommodityModel->setQuery( queryStr );
 
     QModelIndex index;
     index = preCommodityModel->index( 0, 0 ); // 单价

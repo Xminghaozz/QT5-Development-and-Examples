@@ -33,6 +33,7 @@ Dialog::Dialog( QWidget *parent )
         close();
         return;
     }
+
     label1->setText( tr( "服务器端口:%1" ).arg( timeserver->serverPort() ) );
 }
 
