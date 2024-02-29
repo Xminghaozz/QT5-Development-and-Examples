@@ -2,7 +2,7 @@
 #define FILESRVDLG_H
 
 #include <QDialog>
-#include <QElapsedTimer>>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
