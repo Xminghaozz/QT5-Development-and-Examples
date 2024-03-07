@@ -23,7 +23,7 @@ Rectangle {
         }
           NumberAnimation {				//用动画设置对比度
             target: bright
-            property: "contrast"		//(d)
+            property: "contrast"
             to: 0.25					//对比度增强
             duration: 2000
         }
