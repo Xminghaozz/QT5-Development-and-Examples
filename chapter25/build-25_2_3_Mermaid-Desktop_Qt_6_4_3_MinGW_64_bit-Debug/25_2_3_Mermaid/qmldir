@@ -1,0 +1,6 @@
+module 25_2_3_Mermaid
+typeinfo app25_2_3_Mermaid.qmltypes
+prefer :/25_2_3_Mermaid/
+Main 1.0 Main.qml
+MainForm 1.0 MainForm.qml
+
